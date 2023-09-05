@@ -42,6 +42,7 @@ dependencies:
   collection: ^1.17.1
   url_launcher: ^6.1.14
   get_it: ^7.6.2
+  clock: ^1.1.1
 
 dev_dependencies:
   flutter_test:
