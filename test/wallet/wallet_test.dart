@@ -5,37 +5,55 @@ import 'package:mockito/mockito.dart';
 
 import 'wallet_test.mocks.dart';
 
-@GenerateNiceMocks([MockSpec<ProductRepository>()])
+@GenerateNiceMocks(
+    [MockSpec<ProductRepository>(), MockSpec<WalletRepository>()])
 main() {
   test("purchase product success", () {
     var mockProductRepository = MockProductRepository();
+    var mockWalletRepository = MockWalletRepository();
 
-    var purchaseProductService = PurchaseProductService(mockProductRepository);
+    when(mockWalletRepository.get()).thenAnswer((_) async => Wallet(100));
 
-    purchaseProductService.execute(const Product(100), Wallet(200));
+    var purchaseProductService = PurchaseProductService(
+      mockProductRepository,
+      mockWalletRepository,
+    );
 
-    verify(mockProductRepository.purchase(const Product(100))).called(1);
+    var coupon = const NewYearCoupon(discount: 0.5);
+    const product = Product(100);
+    purchaseProductService.execute(product, coupon);
+
+    verify(mockProductRepository.purchase(product, coupon)).called(1);
   });
 }
 
 class PurchaseProductService {
   final ProductRepository productRepository;
+  final WalletRepository walletRepository;
 
-  PurchaseProductService(this.productRepository);
+  PurchaseProductService(this.productRepository, this.walletRepository);
 
-  void execute(Product product, Wallet wallet) {
+  Future<void> execute(Product product, NewYearCoupon? coupon) async {
+    var now = DateTime.now();
+    if (coupon != null && now.month != 1 && now.day != 1) {
+      throw CouponInvalidException();
+    }
+
+    var wallet = await walletRepository.get();
     if (product.price > wallet.money) {
       throw MoneyNotEnoughException();
     }
 
-    productRepository.purchase(product);
+    productRepository.purchase(product, coupon);
   }
 }
 
 class MoneyNotEnoughException implements Exception {}
 
+class CouponInvalidException implements Exception {}
+
 class ProductRepository {
-  Future<void> purchase(Product product) async {}
+  Future<void> purchase(Product product, NewYearCoupon? coupon) async {}
 }
 
 class Product extends Equatable {
@@ -53,15 +71,17 @@ class Wallet {
   Wallet(this.money);
 }
 
-class Coupon extends Equatable {
+class NewYearCoupon extends Equatable {
   final double discount;
-  final DateTime deadline;
 
-  const Coupon({
+  const NewYearCoupon({
     required this.discount,
-    required this.deadline,
   });
 
   @override
-  List<Object?> get props => [discount, deadline];
+  List<Object?> get props => [discount];
+}
+
+class WalletRepository {
+  Future<Wallet> get() async => Wallet(100);
 }
