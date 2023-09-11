@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'exception_test.mocks.dart';
+import 'exception_2_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<ProductRepository>(), MockSpec<WalletRepository>()])
 main() {
@@ -11,16 +11,11 @@ main() {
     var mockProductRepository = MockProductRepository();
     var mockWalletRepository = MockWalletRepository();
 
-    when(mockWalletRepository.get()).thenAnswer((_) async => Wallet(101));
+    when(mockWalletRepository.get()).thenAnswer((_) async => Wallet(50));
 
     var purchaseProductService = PurchaseProductService(mockProductRepository, mockWalletRepository);
 
-    try {
-      await purchaseProductService.execute(const Product(100));
-      assert(false);
-    } catch (e) {
-      expect(e, isA<MoneyNotEnoughException>());
-    }
+    expect(() => purchaseProductService.execute(const Product(100)), throwsA(isA<MoneyNotEnoughException>()));
   });
 }
 

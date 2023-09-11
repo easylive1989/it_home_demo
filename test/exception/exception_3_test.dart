@@ -3,25 +3,36 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'exception_test.mocks.dart';
+import 'exception_3_test.mocks.dart';
 
-@GenerateNiceMocks([MockSpec<ProductRepository>(), MockSpec<WalletRepository>()])
+@GenerateNiceMocks([MockSpec<PurchaseProductService>()])
 main() {
-  test("should throw money not enough exception", () async {
-    var mockProductRepository = MockProductRepository();
-    var mockWalletRepository = MockWalletRepository();
+  test("purchase fail", () async {
+    var mockPurchaseProductService = MockPurchaseProductService();
 
-    when(mockWalletRepository.get()).thenAnswer((_) async => Wallet(101));
+    when(mockPurchaseProductService.execute(any)).thenThrow(MoneyNotEnoughException());
 
-    var purchaseProductService = PurchaseProductService(mockProductRepository, mockWalletRepository);
+    [].first
 
-    try {
-      await purchaseProductService.execute(const Product(100));
-      assert(false);
-    } catch (e) {
-      expect(e, isA<MoneyNotEnoughException>());
-    }
+    var actual = await PurchaseProductController(mockPurchaseProductService).purchase(const Product(100));
+
+    expect(actual, false);
   });
+}
+
+class PurchaseProductController {
+  final PurchaseProductService purchaseProductService;
+
+  PurchaseProductController(this.purchaseProductService);
+
+  Future<bool> purchase(Product product) async {
+    try {
+      await purchaseProductService.execute(product);
+      return true;
+    } on MoneyNotEnoughException {
+      return false;
+    }
+  }
 }
 
 class PurchaseProductService {
