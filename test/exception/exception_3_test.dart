@@ -12,8 +12,6 @@ main() {
 
     when(mockPurchaseProductService.execute(any)).thenThrow(MoneyNotEnoughException());
 
-    [].first
-
     var actual = await PurchaseProductController(mockPurchaseProductService).purchase(const Product(100));
 
     expect(actual, false);
