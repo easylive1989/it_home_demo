@@ -17,6 +17,9 @@ main() {
   });
 }
 
+///
+/// user_repository.dart
+///
 class UserRepository {
   Future<User> get(int userId) async {
     var response = await http.get(Uri.parse("https://jsonplaceholder.typicode.com/users/$userId"));
@@ -24,6 +27,9 @@ class UserRepository {
   }
 }
 
+///
+/// user.dart
+///
 class User extends Equatable {
   final int id;
   final String name;
