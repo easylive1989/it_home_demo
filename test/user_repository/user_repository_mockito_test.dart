@@ -6,7 +6,8 @@ import 'package:http/http.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'all_in_one_mockito_test.mocks.dart';
+import 'user_repository_mockito_test.mocks.dart';
+
 
 @GenerateNiceMocks([MockSpec<Client>()])
 main() {

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
+///
+/// user_repository_test.dart
+///
 main() {
   test("get user ok from api", () async {
     var userRepository = UserRepository();
