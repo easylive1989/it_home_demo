@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -8,9 +9,9 @@ main() {
   test("get user ok from api", () async {
     var userRepository = UserRepository();
 
-    var user = await userRepository.get(2);
+    var user = await userRepository.get(1);
 
-    expect(user, User(id: 1, name: "Leanne Graham"));
+    expect(user, const User(id: 1, name: "Leanne Graham"));
   });
 }
 
@@ -21,11 +22,11 @@ class UserRepository {
   }
 }
 
-class User {
+class User extends Equatable {
   final int id;
   final String name;
 
-  User({
+  const User({
     required this.id,
     required this.name,
   });
@@ -38,26 +39,5 @@ class User {
   }
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is User && other.id == id && other.name == name;
-  }
-
-  @override
-  int get hashCode => id.hashCode ^ name.hashCode;
-}
-
-class FakeClient implements Client {
-  final http.Response response;
-
-  FakeClient(this.response);
-
-  @override
-  Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
-    return response;
-  }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) {}
+  List<Object?> get props => [id, name];
 }
