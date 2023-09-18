@@ -6,9 +6,9 @@ import 'package:http/http.dart';
 
 main() {
   test("get user ok from api", () async {
-    var fakeClient = FakeClient(Response("{\"id\":1, \"name\": \"Tom\"}", 200));
+    var stubClient = StubClient(Response("{\"id\":1, \"name\": \"Tom\"}", 200));
 
-    var userRepository = UserRepository.create(fakeClient);
+    var userRepository = UserRepository.create(stubClient);
 
     var user = await userRepository.get(1);
 
@@ -57,10 +57,10 @@ class User {
   int get hashCode => id.hashCode ^ name.hashCode;
 }
 
-class FakeClient implements Client {
+class StubClient implements Client {
   final http.Response response;
 
-  FakeClient(this.response);
+  StubClient(this.response);
 
   @override
   Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
