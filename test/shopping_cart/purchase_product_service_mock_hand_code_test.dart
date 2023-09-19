@@ -1,25 +1,45 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+
 main() {
   test("purchase product success", () {
-    var testProductRepository = TestProductRepository();
+    var mockProductRepository = MockProductRepository();
 
-    var purchaseProductService = PurchaseProductService(testProductRepository);
+    mockProductRepository.setExpectedCallCount(1);
+    mockProductRepository.setExpectedProduct(const Product(100));
+
+    var purchaseProductService = PurchaseProductService(mockProductRepository);
 
     purchaseProductService.execute(const Product(100), Wallet(200));
 
-    expect(testProductRepository.product, const Product(100));
+    mockProductRepository.verify();
   });
 }
 
-class TestProductRepository implements ProductRepository {
-  Product? product;
+class MockProductRepository implements ProductRepository {
+  int expectedCallCount = 0;
+  int actualCallCount = 0;
+  Product? expectedProduct;
+  Product? actualProduct;
+
+  void setExpectedProduct(Product product) {
+    expectedProduct = product;
+  }
+
+  void setExpectedCallCount(int count) {
+    expectedCallCount = count;
+  }
 
   @override
   Future<void> purchase(Product product) async {
-    this.product = product;
+    actualProduct = product;
+    actualCallCount ++;
+  }
+
+  void verify() {
+    expect(actualProduct, expectedProduct);
+    expect(actualCallCount, expectedCallCount);
   }
 }
 

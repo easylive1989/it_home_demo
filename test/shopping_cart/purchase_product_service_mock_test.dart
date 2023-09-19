@@ -1,26 +1,23 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
+import 'purchase_product_service_mock_test.mocks.dart';
+
+
+@GenerateNiceMocks([MockSpec<ProductRepository>()])
 main() {
   test("purchase product success", () {
-    var testProductRepository = TestProductRepository();
+    var mockProductRepository = MockProductRepository();
 
-    var purchaseProductService = PurchaseProductService(testProductRepository);
+    var purchaseProductService = PurchaseProductService(mockProductRepository);
 
     purchaseProductService.execute(const Product(100), Wallet(200));
 
-    expect(testProductRepository.product, const Product(100));
+    verify(mockProductRepository.purchase(const Product(100))).called(1);
   });
-}
-
-class TestProductRepository implements ProductRepository {
-  Product? product;
-
-  @override
-  Future<void> purchase(Product product) async {
-    this.product = product;
-  }
 }
 
 class PurchaseProductService {
