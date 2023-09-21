@@ -2,6 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 
+///
+/// purchase_product_service_test.dart
+///
 main() {
   test("purchase product success", () {
     var mockProductRepository = MockProductRepository();
@@ -43,6 +46,9 @@ class MockProductRepository implements ProductRepository {
   }
 }
 
+///
+/// purchase_product_service.dart
+///
 class PurchaseProductService {
   final ProductRepository productRepository;
 
@@ -57,12 +63,21 @@ class PurchaseProductService {
   }
 }
 
+///
+/// money_not_enough_exception.dart
+///
 class MoneyNotEnoughException implements Exception {}
 
+///
+/// product_repository.dart
+///
 class ProductRepository {
   Future<void> purchase(Product product) async {}
 }
 
+///
+/// product.dart
+///
 class Product extends Equatable {
   final double price;
 
@@ -72,6 +87,7 @@ class Product extends Equatable {
   List<Object?> get props => [price];
 }
 
+/// wallet.dart
 class Wallet {
   final double money;
 
