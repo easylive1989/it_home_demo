@@ -10,16 +10,6 @@ import 'my_favorites.dart';
 
 @GenerateNiceMocks([MockSpec<SharedPreferences>()])
 main() {
-  test("getAll", () {
-    var mockSharedPreferences = MockSharedPreferences();
-
-    when(mockSharedPreferences.getStringList("favorites")).thenReturn(["1"]);
-
-    var myFavorites = MyFavorites(mockSharedPreferences);
-
-    expect(myFavorites.getAll(), [const Product(1)]);
-  });
-
   test("add favorite", () {
     var mockSharedPreferences = MockSharedPreferences();
 
@@ -28,5 +18,15 @@ main() {
     myFavorites.add(const Product(1));
 
     verify(mockSharedPreferences.setStringList("favorites", ["1"]));
+  });
+
+  test("getAll", () {
+    var mockSharedPreferences = MockSharedPreferences();
+
+    when(mockSharedPreferences.getStringList("favorites")).thenReturn(["1"]);
+
+    var myFavorites = MyFavorites(mockSharedPreferences);
+
+    expect(myFavorites.getAll(), [const Product(1)]);
   });
 }
