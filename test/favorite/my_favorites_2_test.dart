@@ -1,8 +1,8 @@
-import 'dart:convert';
-
-import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'product.dart';
+import 'my_favorites.dart';
 
 main() {
   test("add favorite", () {
@@ -32,34 +32,4 @@ class FakeSharedPreferences implements SharedPreferences {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class MyFavorites {
-  final SharedPreferences _preferences;
-
-  MyFavorites(SharedPreferences preference) : _preferences = preference;
-
-  Future<void> add(Product product) async {
-    var favorites = getAll();
-    favorites.add(product);
-    await _preferences.setStringList("favorites",
-        favorites.map((product) => product.id.toString()).toList());
-  }
-
-  List<Product> getAll() {
-    return _preferences
-        .getStringList("favorites")
-        ?.map((id) => Product(int.parse(id)))
-        .toList() ??
-        [];
-  }
-}
-
-class Product extends Equatable {
-  final int id;
-
-  const Product(this.id);
-
-  @override
-  List<Object?> get props => [id];
 }

@@ -1,10 +1,12 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'my_favorites_test.mocks.dart';
+
+import 'product.dart';
+import 'my_favorites.dart';
 
 @GenerateNiceMocks([MockSpec<SharedPreferences>()])
 main() {
@@ -27,34 +29,4 @@ main() {
 
     verify(mockSharedPreferences.setStringList("favorites", ["1"]));
   });
-}
-
-class MyFavorites {
-  final SharedPreferences _preferences;
-
-  MyFavorites(SharedPreferences preference) : _preferences = preference;
-
-  Future<void> add(Product product) async {
-    var favorites = getAll();
-    favorites.add(product);
-    await _preferences.setStringList("favorites",
-        favorites.map((product) => product.id.toString()).toList());
-  }
-
-  List<Product> getAll() {
-    return _preferences
-            .getStringList("favorites")
-            ?.map((id) => Product(int.parse(id)))
-            .toList() ??
-        [];
-  }
-}
-
-class Product extends Equatable {
-  final int id;
-
-  const Product(this.id);
-
-  @override
-  List<Object?> get props => [id];
 }
