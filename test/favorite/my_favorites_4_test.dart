@@ -10,24 +10,24 @@ main() {
 
     var myFavorites = MyFavorites(fakeSharedPreferences);
 
-    myFavorites.add(const Product(1));
+    myFavorites.add(const Product(1, "book"));
 
-    expect(myFavorites.getAll(), [const Product(1)]);
+    expect(myFavorites.getAll(), [const Product(1, "book")]);
   });
 }
 
 class FakeSharedPreferences implements SharedPreferences {
-  List<String> fake = [];
+  List<String> value = [];
 
   @override
   Future<bool> setStringList(String key, List<String> value) async {
-    fake = value;
+    this.value = value;
     return true;
   }
 
   @override
   List<String>? getStringList(String key) {
-    return fake;
+    return value;
   }
 
   @override
@@ -43,13 +43,13 @@ class MyFavorites {
     var favorites = getAll();
     favorites.add(product);
     await _preferences.setStringList("favorites",
-        favorites.map((product) => product.id.toString()).toList());
+        favorites.map((product) => jsonEncode(product.toJson())).toList());
   }
 
   List<Product> getAll() {
     return _preferences
         .getStringList("favorites")
-        ?.map((id) => Product(int.parse(id)))
+        ?.map((json) => Product.fromJson(jsonDecode(json)))
         .toList() ??
         [];
   }
@@ -57,9 +57,24 @@ class MyFavorites {
 
 class Product extends Equatable {
   final int id;
+  final String type;
 
-  const Product(this.id);
+  const Product(this.id, this.type);
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      json['id'],
+      json['type'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type,
+    };
+  }
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, type];
 }
