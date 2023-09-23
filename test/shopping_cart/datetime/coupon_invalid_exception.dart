@@ -1,0 +1,1 @@
+class CouponInvalidException implements Exception {}
