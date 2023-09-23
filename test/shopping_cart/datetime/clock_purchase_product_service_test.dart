@@ -13,7 +13,7 @@ import 'wallet.dart';
 
 @GenerateNiceMocks([MockSpec<ProductRepository>(), MockSpec<WalletRepository>()])
 main() {
-  test("purchase product success", () async {
+  test("use coupon when purchase product", () async {
     withClock(Clock.fixed(DateTime.parse('2023-01-01')), () async {
       var mockProductRepository = MockProductRepository();
       var mockWalletRepository = MockWalletRepository();

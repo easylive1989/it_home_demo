@@ -11,7 +11,7 @@ import 'wallet_repository.dart';
 
 @GenerateNiceMocks([MockSpec<ProductRepository>(), MockSpec<WalletRepository>()])
 main() {
-  test("purchase product success", () {
+  test("use coupon when purchase product", () {
     var mockProductRepository = MockProductRepository();
     var mockWalletRepository = MockWalletRepository();
 

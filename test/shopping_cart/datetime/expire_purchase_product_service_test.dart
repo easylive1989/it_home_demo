@@ -4,9 +4,9 @@ import 'package:mockito/mockito.dart';
 
 import 'product.dart';
 import 'product_repository.dart';
-import 'new_purchase_product_service.dart';
-import 'new_purchase_product_service_test.mocks.dart';
-import 'new_year_coupon.dart';
+import 'expire_purchase_product_service.dart';
+import 'expire_purchase_product_service_test.mocks.dart';
+import 'coupon.dart';
 import 'time_repository.dart';
 import 'wallet_repository.dart';
 import 'wallet.dart';
@@ -16,21 +16,19 @@ main() {
   test("use coupon when purchase product", () async {
     var mockProductRepository = MockProductRepository();
     var mockWalletRepository = MockWalletRepository();
-    var mockTimeRepository = MockTimeRepository();
 
-    when(mockTimeRepository.now()).thenReturn(DateTime.parse('2023-01-01'));
     when(mockWalletRepository.get()).thenAnswer((_) async => Wallet(100));
 
-    var purchaseProductService = PurchaseProductService(mockProductRepository, mockWalletRepository, mockTimeRepository);
+    var purchaseProductService = PurchaseProductService(mockProductRepository, mockWalletRepository);
 
-    await purchaseProductService.execute(
-        const Product(100),
-        NewYearCoupon());
+    const product = Product(100);
+    var coupon = Coupon(
+        discount: 0.5,
+        expiredAt: DateTime.now().add(const Duration(days: 10),
+        ));
 
-    verify(
-      mockProductRepository.purchase(
-          const Product(100),
-          NewYearCoupon()),
-    ).called(1);
+    await purchaseProductService.execute(product, coupon);
+
+    verify(mockProductRepository.purchase(product, coupon)).called(1);
   });
 }

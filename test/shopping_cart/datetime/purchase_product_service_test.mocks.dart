@@ -7,11 +7,10 @@ import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'new_year_coupon.dart' as _i6;
 import 'product.dart' as _i5;
 import 'product_repository.dart' as _i3;
 import 'wallet.dart' as _i2;
-import 'wallet_repository.dart' as _i7;
+import 'wallet_repository.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -41,7 +40,7 @@ class MockProductRepository extends _i1.Mock implements _i3.ProductRepository {
   @override
   _i4.Future<void> purchase(
     _i5.Product? product,
-    _i6.NewYearCoupon? coupon,
+    dynamic coupon,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -59,7 +58,7 @@ class MockProductRepository extends _i1.Mock implements _i3.ProductRepository {
 /// A class which mocks [WalletRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWalletRepository extends _i1.Mock implements _i7.WalletRepository {
+class MockWalletRepository extends _i1.Mock implements _i6.WalletRepository {
   @override
   _i4.Future<_i2.Wallet> get() => (super.noSuchMethod(
         Invocation.method(
