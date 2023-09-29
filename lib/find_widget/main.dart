@@ -9,13 +9,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           child: Column(
-            children: const [
+            children: [
               UserInfoTextField(
                 icon: Icons.abc_outlined,
                 label: "Name",
@@ -77,6 +77,6 @@ class _UserInfoTextFieldState extends State<UserInfoTextField> {
   }
 
   void _showSuccess(BuildContext context) async {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Update Success")));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("更新成功")));
   }
 }
