@@ -1,43 +1,50 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 main() {
-  runApp(const ChatRoomPage());
+  runApp(Provider<ChatRoomRepository>(
+    create: (context) => ChatRoomRepository(),
+    child: const ChatRoomPage(),
+  ));
 }
 
-class ChatRoomPage extends StatelessWidget {
+class ChatRoomPage extends StatefulWidget {
   const ChatRoomPage({super.key});
 
   @override
+  State<ChatRoomPage> createState() => _ChatRoomPageState();
+}
+
+class _ChatRoomPageState extends State<ChatRoomPage> {
+  @override
   Widget build(BuildContext context) {
+    var chatRooms = context.read<ChatRoomRepository>().get();
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(title: const Text("聊天室列表")),
         body: Center(
-            child: ListView(
-          children: [
-            ListTile(
-              title: const Text("韭菜投資群"),
-              subtitle: const Text("你不理財，財不理你"),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
-            ),
-            ListTile(
-              title: const Text("山道猴子討論區"),
-              subtitle: const Text("莫忘初衷"),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
-            ),
-          ],
-        )),
+          child: ListView.builder(
+            itemCount: chatRooms.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(chatRooms[index].name),
+                subtitle: Text(chatRooms[index].description),
+                // trailing: const Icon(Icons.chevron_right),
+                // onTap: () {},
+              );
+            },
+          ),
+        ),
         floatingActionButton: Builder(builder: (context) {
           return FloatingActionButton(
-            onPressed: () {
-              showDialog(
+            onPressed: () async {
+              await showDialog(
                 context: context,
-                builder: (context) {
-                  return const CreateChatRoomDialog();
-                },
+                builder: (context) => const CreateChatRoomDialog(),
               );
+              setState(() {});
             },
             child: const Icon(Icons.add),
           );
@@ -47,8 +54,23 @@ class ChatRoomPage extends StatelessWidget {
   }
 }
 
-class CreateChatRoomDialog extends StatelessWidget {
+class CreateChatRoomDialog extends StatefulWidget {
   const CreateChatRoomDialog({super.key});
+
+  @override
+  State<CreateChatRoomDialog> createState() => _CreateChatRoomDialogState();
+}
+
+class _CreateChatRoomDialogState extends State<CreateChatRoomDialog> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,23 +83,31 @@ class CreateChatRoomDialog extends StatelessWidget {
           color: Colors.white,
           child: Column(
             children: [
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: "聊天室名稱",
                 ),
               ),
               const SizedBox(height: 8),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: "房間說明",
+                  labelText: "聊天室說明",
                 ),
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: Navigator.of(context).pop,
-                child: const Text("Create"),
+                onPressed: () {
+                  context.read<ChatRoomRepository>().add(ChatRoom(
+                        _nameController.text,
+                        _descriptionController.text,
+                      ));
+                  Navigator.of(context).pop();
+                },
+                child: const Text("建立"),
               ),
             ],
           ),
@@ -87,18 +117,26 @@ class CreateChatRoomDialog extends StatelessWidget {
   }
 }
 
-class ChatRoom {
+class ChatRoom extends Equatable {
   final String name;
   final String description;
 
-  ChatRoom(this.name, this.description);
+  const ChatRoom(this.name, this.description);
+
+  @override
+  List<Object?> get props => [name, description];
 }
 
 class ChatRoomRepository {
-  List<ChatRoom> _chatRooms = [
-    ChatRoom("韭菜投資群", "你不理財，財不理你"),
+  final List<ChatRoom> _chatRooms = [
+    const ChatRoom("韭菜投資群", "你不理財，財不理你"),
+    const ChatRoom("山道猴子討論區", "莫忘初衷"),
   ];
 
+  List<ChatRoom> get() => _chatRooms;
 
-
+  void add(ChatRoom chatRoom) {
+    if (_chatRooms.contains(chatRoom)) return;
+    _chatRooms.add(chatRoom);
+  }
 }
