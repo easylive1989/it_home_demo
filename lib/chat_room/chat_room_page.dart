@@ -28,11 +28,15 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           child: ListView.builder(
             itemCount: chatRooms.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(chatRooms[index].name),
-                subtitle: Text(chatRooms[index].description),
-                // trailing: const Icon(Icons.chevron_right),
-                // onTap: () {},
+              return Dismissible(
+                key: ValueKey(chatRooms[index].name),
+                onDismissed: (direction) => chatRooms.removeAt(index),
+                child: ListTile(
+                  title: Text(chatRooms[index].name),
+                  subtitle: Text(chatRooms[index].description),
+                  // trailing: const Icon(Icons.chevron_right),
+                  // onTap: () {},
+                ),
               );
             },
           ),
