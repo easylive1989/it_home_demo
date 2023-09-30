@@ -2,30 +2,24 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 main() {
-  runApp(
-    Provider(
-      create: (context) => DogRepository(),
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: DogBreedsWidget(),
-      ),
-    ),
-  );
+  runApp(MaterialApp(home: DogBreedsWidget(dogRepository: DogRepository())));
 }
 
 class DogBreedsWidget extends StatelessWidget {
-  const DogBreedsWidget({super.key});
+  const DogBreedsWidget({
+    super.key,
+    required this.dogRepository,
+  });
+
+  final DogRepository dogRepository;
 
   @override
   Widget build(BuildContext context) {
-    var repository = context.read<DogRepository>();
-
     return Scaffold(
       body: FutureBuilder<List<String>>(
-        future: repository.get(),
+        future: dogRepository.get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const CircularProgressIndicator();
@@ -47,8 +41,7 @@ class DogBreedsWidget extends StatelessWidget {
 
 class DogRepository {
   Future<List<String>> get() async {
-    var response =
-        await http.get(Uri.parse("https://dog.ceo/api/breeds/list/all"));
+    var response = await http.get(Uri.parse("https://dog.ceo/api/breeds/list/all"));
 
     return jsonDecode(response.body)["message"].keys.toList();
   }

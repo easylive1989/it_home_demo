@@ -2,16 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
+
+final getIt = GetIt.instance;
 
 main() {
+  getIt.registerSingleton<DogRepository>(DogRepository());
+
   runApp(
-    Provider(
-      create: (context) => DogRepository(),
-      child: const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: DogBreedsWidget(),
-      ),
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: DogBreedsWidget(),
     ),
   );
 }
@@ -21,7 +22,7 @@ class DogBreedsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var repository = context.read<DogRepository>();
+    var repository = getIt<DogRepository>();
 
     return Scaffold(
       body: FutureBuilder<List<String>>(

@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 main() {
-  runApp(const MaterialApp(home: Scaffold(body: DogBreedsWidget())));
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: DogBreedsWidget(),
+  ));
 }
 
 class DogBreedsWidget extends StatelessWidget {
@@ -12,22 +15,24 @@ class DogBreedsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-      future: DogRepository().get(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        }
+    return Scaffold(
+      body: FutureBuilder<List<String>>(
+        future: DogRepository().get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const CircularProgressIndicator();
+          }
 
-        return ListView.builder(
-          itemCount: snapshot.data!.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(snapshot.data![index]),
-            );
-          },
-        );
-      },
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(snapshot.data![index]),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
