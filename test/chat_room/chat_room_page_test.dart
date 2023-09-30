@@ -41,9 +41,8 @@ main() {
 
     await givenView(tester, const ChatRoomPage(), repository: fakeChatRoomRepository);
 
-    // 左滑刪除聊天室
     await tester.drag(find.text("韭菜投資群組"), const Offset(-500, 0));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text("韭菜投資群組"), findsNothing);
     expect(find.text("你不理財，財不理你"), findsNothing);
