@@ -34,6 +34,20 @@ main() {
     expect(find.text("地球暖化討論群"), findsNothing);
     expect(find.text("愛地球"), findsNothing);
   });
+
+  testWidgets("delete chat room", (tester) async {
+    var fakeChatRoomRepository = FakeChatRoomRepository();
+    fakeChatRoomRepository.add(const ChatRoom("韭菜投資群組", "你不理財，財不理你"));
+
+    await givenView(tester, const ChatRoomPage(), repository: fakeChatRoomRepository);
+
+    // 左滑刪除聊天室
+    await tester.drag(find.text("韭菜投資群組"), const Offset(-500, 0));
+    await tester.pump();
+
+    expect(find.text("韭菜投資群組"), findsNothing);
+    expect(find.text("你不理財，財不理你"), findsNothing);
+  });
 }
 
 void thenShowText(String text) {
@@ -45,7 +59,8 @@ Future<void> whenTapCreateButton(WidgetTester tester) async {
   await tester.pump();
 }
 
-Future<void> whenEnterChatRoomDescription(WidgetTester tester, String text) async {
+Future<void> whenEnterChatRoomDescription(
+    WidgetTester tester, String text) async {
   await tester.enterText(
     find.byWidgetPredicate((widget) =>
         widget is TextField && widget.decoration?.labelText == "聊天室說明"),
@@ -66,9 +81,10 @@ Future<void> whenTapAddButton(WidgetTester tester) async {
   await tester.pump();
 }
 
-Future<void> givenView(WidgetTester tester, ChatRoomPage chatRoomPage) async {
+Future<void> givenView(WidgetTester tester, ChatRoomPage chatRoomPage,
+    {ChatRoomRepository? repository}) async {
   await tester.pumpWidget(Provider<ChatRoomRepository>.value(
-    value: FakeChatRoomRepository(),
+    value: repository ?? FakeChatRoomRepository(),
     child: chatRoomPage,
   ));
 }
