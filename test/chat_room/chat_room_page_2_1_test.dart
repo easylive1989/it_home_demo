@@ -27,7 +27,6 @@ main() {
     await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
 
-    MaterialPageRoute
     var result = verify(mockNavigatorObserver.didPush(captureAny, any));
     expect(result.captured[1].settings.name, CreateChatRoomPage.routeName);
   });
