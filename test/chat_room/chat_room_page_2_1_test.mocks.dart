@@ -42,21 +42,6 @@ class MockChatRoomRepository extends _i1.Mock
       );
 }
 
-/// A class which mocks [FriendRepository].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockFriendRepository extends _i1.Mock implements _i2.FriendRepository {
-  @override
-  List<_i2.User> get() => (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [],
-        ),
-        returnValue: <_i2.User>[],
-        returnValueForMissingStub: <_i2.User>[],
-      ) as List<_i2.User>);
-}
-
 /// A class which mocks [NavigatorObserver].
 ///
 /// See the documentation for Mockito's code generation for more information.
