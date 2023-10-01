@@ -60,8 +60,7 @@ class _ChatRoomListPageState extends State<ChatRoomListPage> {
       floatingActionButton: Builder(builder: (context) {
         return FloatingActionButton(
           onPressed: () async {
-            var createdChatRoomName =
-                await Navigator.of(context).pushNamed("/create");
+            var createdChatRoomName = await Navigator.of(context).pushNamed("/create");
             if (mounted && createdChatRoomName != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("$createdChatRoomName 建立成功")));

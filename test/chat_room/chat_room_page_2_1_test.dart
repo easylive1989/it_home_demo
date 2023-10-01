@@ -19,7 +19,7 @@ main() {
         child: MaterialApp(
           home: const ChatRoomListPage(),
           navigatorObservers: [mockNavigatorObserver],
-          routes: {CreateChatRoomPage.routeName: (context) => const SizedBox()},
+          onGenerateRoute: dummyRouteGenerator,
         ),
       ),
     );
@@ -27,7 +27,30 @@ main() {
     await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
 
-    var result = verify(mockNavigatorObserver.didPush(captureAny, any));
-    expect(result.captured[1].settings.name, CreateChatRoomPage.routeName);
+    verify(mockNavigatorObserver.didPush(
+      captureThat(RouteMatcher(routeName: CreateChatRoomPage.routeName)),
+      any,
+    ));
   });
+}
+
+Route Function(RouteSettings) get dummyRouteGenerator =>
+    (settings) => MaterialPageRoute(
+        settings: settings, builder: (context) => const SizedBox());
+
+class RouteMatcher extends Matcher {
+  final String routeName;
+  final dynamic arguments;
+
+  RouteMatcher({required this.routeName, this.arguments});
+
+  @override
+  Description describe(Description description) {
+    return description.add('routeName: $routeName, arguments: $arguments');
+  }
+
+  @override
+  bool matches(item, Map matchState) {
+    return item.settings.name == routeName;
+  }
 }
