@@ -3,21 +3,26 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 main() {
+  setUp(()=> registerFallbackValue(const LaunchOptions()));
+
   testWidgets("should open t&c page when click t&c", (tester) async {
     var mockUrlLauncher = MockUrlLauncher();
     UrlLauncherPlatform.instance = mockUrlLauncher;
+
+    when(() => mockUrlLauncher.launchUrl(any(), any())).thenAnswer((invocation) async => true);
 
     await tester.pumpWidget(const MaterialApp(home: TermAndCondition()));
 
     await tester.tap(find.text("Terms & Conditions"));
 
-    expect(mockUrlLauncher.url, "https://www.google.com");
+    verify(() => mockUrlLauncher.launchUrl("https://www.google.com", any()));
   });
 }
+
+class MockUrlLauncher extends Mock with MockPlatformInterfaceMixin implements UrlLauncherPlatform {}
 
 class TermAndCondition extends StatelessWidget {
   const TermAndCondition({super.key});
@@ -38,17 +43,5 @@ class TermAndCondition extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class MockUrlLauncher extends Mock
-    with MockPlatformInterfaceMixin
-    implements UrlLauncherPlatform {
-  String? url;
-
-  @override
-  Future<bool> launchUrl(String url, LaunchOptions options) async {
-    this.url = url;
-    return true;
   }
 }
